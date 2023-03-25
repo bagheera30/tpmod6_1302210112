@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,22 +11,38 @@ namespace tpmodul6_1302210112
     {
         private int id;
         private string title;
-        private int playcount;
+        private int playCount;
+
         public SayaTubeVideo(string title)
         {
-            this.id=new Random().Next(10000, 99999);
-            this.title=title;
-            this.playcount=0;
+            Contract.Requires(title != null, "judul tidak boleh berisi kosong");
+            Contract.Requires(title.Length <= 100, "judul jumlah karakter harus di bawah 100 karakter");
+
+            this.id = new Random().Next(10000, 99999);
+            this.title = title;
+            this.playCount = 0;
         }
+
         public void IncreasePlayCount(int input)
         {
-            this.playcount += input;
+            Contract.Requires(input > 0 && input <= 10000000, "Count must be between 1 and 10,000,000.");
+
+            try
+            {
+                checked
+                {
+                    this.playCount += input;
+                }
+            }
+            catch (OverflowException e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+            }
         }
-        public void printVideoDetail()
+
+        public void PrintVideoDetails()
         {
-            Console.WriteLine("Video ID: {0}", this.id);
-            Console.WriteLine("Title: {0}", this.title);
-            Console.WriteLine("Play Count: {0}", this.playcount);
+            Console.WriteLine($"ID: {this.id}\nTitle: {this.title}\nPlay Count: {this.playCount}\n");
         }
     }
 }
